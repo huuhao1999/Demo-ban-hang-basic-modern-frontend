@@ -1,0 +1,27 @@
+[
+    {
+        "display_name": "Dashboard",
+        "route": "/",
+        "icon": "bx bx-category-alt"
+    },
+    {
+        "display_name": "Products",
+        "route": "/products",
+        "icon": "bx bx-bar-chart-alt"
+    },
+    {
+        "display_name": "Categories",
+        "route": "/categories",
+        "icon": "bx bx-package"
+    },
+    {
+        "display_name": "Lecturers",
+        "route": "/lecturers",
+        "icon": "bx bx-user-pin"
+    },
+    {
+        "display_name": "Students",
+        "route": "/students",
+        "icon": "bx bx-user-pin"
+    }
+]
