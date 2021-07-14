@@ -15,8 +15,8 @@
         "icon": "bx bx-package"
     },
     {
-        "display_name": "Lecturers",
-        "route": "/lecturers",
+        "display_name": "Orders",
+        "route": "/orders",
         "icon": "bx bx-user-pin"
     },
     {

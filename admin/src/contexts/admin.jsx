@@ -11,6 +11,10 @@ export const AdminProvider = ({ children }) => {
         const response = await api.get('/categories');
         return response.data;
     }
+    async function getAllOrder(params) {
+        const response = await api.get('/user/order', { params });
+        return response.data;
+    }
     async function getUserById(id) {
         const response = await api.get(`/users/${id}`);
         return response;
@@ -45,7 +49,7 @@ export const AdminProvider = ({ children }) => {
     }
     async function createProduct(entity) {
         console.log(entity);
-        const response = await api.post('/product/create-product',{ entity});
+        const response = await api.post('/product/create-product', { entity });
         return response.data;
     }
     async function deleteAccLecturers(id) {
@@ -72,7 +76,7 @@ export const AdminProvider = ({ children }) => {
         return count;
     }
     return (
-        <AdminContext.Provider value={{ createProduct, getProducts, getCategories, getUserById, deleteById, getLectures, getStudent, totalCoursesOfLec, createAccLecturers, deleteAccLecturers, updatePassAccLecturers, deleteAccStudent }}>
+        <AdminContext.Provider value={{ getAllOrder, createProduct, getProducts, getCategories, getUserById, deleteById, getLectures, getStudent, totalCoursesOfLec, createAccLecturers, deleteAccLecturers, updatePassAccLecturers, deleteAccStudent }}>
             {children}
         </AdminContext.Provider>
     );

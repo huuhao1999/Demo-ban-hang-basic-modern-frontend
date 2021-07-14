@@ -21,6 +21,7 @@ const useStyles = makeStyles({
     },
 });
 const Courses = () => {
+    const storedDataUser = localStorage.getItem('account-admin');
     const product = useRef('');
     const detail = useRef('');
     const price = useRef('');
@@ -29,7 +30,7 @@ const Courses = () => {
     const [courses, setCourses] = useState([]);
     let { categories } = useCategory();
     const [CateGo, setCateGo] = useState([]);
-    const [selectCate, setSelectCate] = useState({value: 'C001'});
+    const [selectCate, setSelectCate] = useState({ value: 'C001' });
     useEffect(() => {
         if (CateGo.length == 0) {
 
@@ -45,11 +46,17 @@ const Courses = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             if (courses.length == 0) {
-
                 try {
-                    let res = await context.getProducts();
 
-                    setCourses(res);
+                    let res = await context.getProducts();
+                    let data = [];
+                    for (let item of res) {
+                        if (item.shopId == JSON.parse(storedDataUser).shopInfo.shopId) {
+                            data.push(item);
+                        }
+                      
+                    }
+                    setCourses(data);
                 } catch (error) {
                     console.log("Failed to fetch data product at: ", error);
                 }
@@ -68,16 +75,18 @@ const Courses = () => {
             detail: detail.current.value,
             price: price.current.value,
             quantity: quantity.current.value,
-            categoryId: selectCate.value
+            categoryId: selectCate.value,
+            shopId: JSON.parse(storedDataUser).shopInfo.shopId
         }
         context.createProduct(entity).then(res => {
             alert("Add product success");
+            return;
         }).catch((error) => {
             console.log("Failed to fetch data product at: ", error);
         });
-        
+
     }
-    const _handleChangeSelect = (event)=>{
+    const _handleChangeSelect = (event) => {
         setSelectCate({ value: event.target.value })
     }
     return (

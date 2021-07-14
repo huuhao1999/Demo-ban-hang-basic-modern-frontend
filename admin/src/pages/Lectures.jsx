@@ -21,25 +21,27 @@ const useStyles = makeStyles({
     },
 });
 const Lectures = () => {
+    const storedDataUser = localStorage.getItem('account-admin');
     const classes = useStyles();
     const [lec, setLec] = useState([]);
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
     const [showAddAcc, setShowAddAcc] = useState(false);
     const [isShowUpdatePass, setisShowUpdatePass] = useState(false);
+    const [shopId, setShopId] = useState(JSON.parse(storedDataUser).shopInfo.shopId);
     const [idUpdate, setIdUpdate] = useState(0);
     const [valueUpdate, setValueUpdate] = useState('');
+    const [order, setOrder] = useState([]);
     let context = useAdmin();
     useEffect(() => {
         const fetchProduct = async () => {
-            if (lec.length == 0) {
+            if (order.length == 0) {
                 try {
-                    let res = await context.getLectures();
-                    for (let item of res) {
-                        let count = await context.totalCoursesOfLec(item._id);
-                        item.count = count;
+                    let res = await context.getAllOrder({ shopId: shopId });
+                    if (res.shopInfo.shopOrder) {
+                        var backToArray = Array.from(new Set(res.shopInfo.shopOrder.map(JSON.stringify))).map(JSON.parse);
+                        setOrder(backToArray);
                     }
-                    setLec(res);
                 } catch (error) {
                     console.log("Failed to fetch data product at: ", error);
                 }
@@ -95,16 +97,24 @@ const Lectures = () => {
             alert("Something wrong!");
             return;
         })
-     //   console.log(entity);
+        //   console.log(entity);
+    }
+
+    let status = {
+        3: 'Đã giao',
+        1: 'Chờ lấy hàng',
+        0: 'Chờ xác nhận',
+        2: 'Đang giao',
+        4: 'Đã huy'
     }
     const handleUpdatePass = () => {
-        context.updatePassAccLecturers(idUpdate, {password: valueUpdate}).then((res)=>{
+        context.updatePassAccLecturers(idUpdate, { password: valueUpdate }).then((res) => {
             alert('Update successfully');
             return;
-        }).catch(()=>{
+        }).catch(() => {
             alert("Something wrong!");
         })
-        
+
     }
     const handleOpenUpdatePass = (e) => {
         setIdUpdate(e.target.getAttribute('data-item'));
@@ -115,47 +125,35 @@ const Lectures = () => {
     return (
         <div>
             <h2 className="page-header">
-                Lecturers
+                Orders
             </h2>
-            {lec.length == 0 ? <BoxLoading /> : ''}
-            {showAddAcc ? <div className='addcatre'>
-                <TextField id="standard-basic" name='email' onChange={evt => updateInputValue(evt)} label="Email" style={{ minWidth: '300px' }} />
-                <TextField id="standard-basic" name='password' type='password' onChange={evt => updateInputValue(evt)} label="Password" style={{ minWidth: '300px' }} style={{ marginLeft: '10px' }} />
-                <Button variant="contained" color="primary" href="#contained-buttons" style={{ marginTop: '13px', marginLeft: '10px', backgroundColor: '#62b4ff', minWidth: '90px' }} onClick={createAccLecturers}>
-                    Add
-                </Button>
-                <Button variant="contained" style={{ marginTop: '13px', marginLeft: '10px' }} onClick={handleCloseAccout}>Cancel</Button>
-            </div> : <Button variant="contained" color="primary" style={{ marginBottom: '20px', backgroundColor: '#62b4ff' }} href="#contained-buttons" onClick={handleOpenAccout}>
-                Add lecturer
-            </Button>}
+
             <TableContainer component={Paper}>
                 <Table className={classes} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>id</TableCell>
-                            <TableCell align="left">Email</TableCell>
-                            <TableCell align="left">Full name</TableCell>
-                            <TableCell align="left">Total courses</TableCell>
-                            <TableCell align="left">Update password</TableCell>
-                            <TableCell align="left">Delete</TableCell>
+                            <TableCell>OrderId</TableCell>
+                            <TableCell align="left">CustomerId</TableCell>
+                            <TableCell align="left">Product name</TableCell>
+                            <TableCell align="left">Total</TableCell>
+                            <TableCell align="left">Status</TableCell>
+                            <TableCell align="left">ShopId</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
 
-                        {lec.map((row) => (
-                            <TableRow key={row._id}>
+                        {order.map((row) => (
+                            <TableRow key={row.orderId}>
                                 <TableCell component="th" scope="row">
-                                    {row._id}
+                                    {row.orderId}
                                 </TableCell>
-                                <TableCell align="left">{row.email}</TableCell>
-                                <TableCell align="left" > {row.full_name}</TableCell>
-                                <TableCell align="left" > {row.count}</TableCell>
-                                <TableCell align="left" data-item={row._id} className="pointer" onClick={handleOpenUpdatePass}> *********</TableCell>
-                                <TableCell align="left" data-item={row._id} className="pointer" onClick={handleDelete}>Delete</TableCell>
+                                <TableCell align="left">{row.customerId}</TableCell>
+                                <TableCell align="left" > {row.productName}</TableCell>
+                                <TableCell align="left" > {row.total}</TableCell>
+                                <TableCell align="left" data-item={row._id} className="pointer" onClick={handleOpenUpdatePass}>{status[row.statusOrder]}</TableCell>
+                                <TableCell align="left" data-item={row._id} className="pointer" onClick={handleDelete}>{row.shopId}</TableCell>
                             </TableRow>
                         ))}
-
-
                     </TableBody>
                 </Table>
             </TableContainer>

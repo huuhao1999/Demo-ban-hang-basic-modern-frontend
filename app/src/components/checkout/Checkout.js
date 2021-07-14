@@ -103,11 +103,15 @@ export default function Checkout() {
         history.push('/signin');
     } else {
         entityOrder = {
-            username: DataUser.username,
-            totalMoney: total,
-            productId: products
+            customerId: DataUser.customerId,
+            productName: storedDataUser[0].name,
+            statusOrder: 0,
+            total: storedDataUser[0].quantity * storedDataUser[0].price,
+            productId: storedDataUser[0].id,
+            shippingAddresss: "Shipping demo"
 
         }
+        console.log(entityOrder);
     }
 
 
@@ -119,12 +123,15 @@ export default function Checkout() {
     const handleNext = async () => {
         setActiveStep(activeStep + 1);
         if (activeStep === steps.length - 1) {
-
-            let res = await orderApi.createOrder({ entityOrder });
-            try {
-                localStorage.removeItem("modern_cart");
-            } catch (error) {
+            if (entityOrder) {
+                let res = await orderApi.createOrder(entityOrder);
+                console.log(res);
+                try {
+                    localStorage.removeItem("modern_cart");
+                } catch (error) {
+                }
             }
+            else alert('No product');
 
         }
     };
