@@ -1,0 +1,17 @@
+  
+.editlogingg {
+ margin-top: 20px;
+ 
+ opacity: 0.4;
+ font-size: 10;
+}
+.editlogingg button {
+
+  font-size: 10;
+ }
+.editlogingg:hover{
+  opacity: 0.9;
+}
+.indexcss{
+  z-index: 100;
+}
